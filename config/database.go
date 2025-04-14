@@ -40,15 +40,14 @@
 // 	return db
 // }
 
-// func ClosDatabaseConnection(db *gorm.DB) {
-// 	dbSQL, err := db.DB()
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		panic(err)
-// 	}
-// 	dbSQL.Close()
-// }
-
+//	func ClosDatabaseConnection(db *gorm.DB) {
+//		dbSQL, err := db.DB()
+//		if err != nil {
+//			fmt.Println(err)
+//			panic(err)
+//		}
+//		dbSQL.Close()
+//	}
 package config
 
 import (
@@ -61,26 +60,29 @@ import (
 )
 
 func SetUpDatabaseConnection() *gorm.DB {
-	// Load environment variables in non-production environments.
+	// Load local environment variables if not in production
 	if os.Getenv("APP_ENV") != "Production" {
-		if err := godotenv.Load(".env"); err != nil {
-			fmt.Println(err)
+		err := godotenv.Load(".env")
+		if err != nil {
+			fmt.Println("Error loading .env file:", err)
 			panic(err)
 		}
 	}
 
-	// Use DATABASE_URL if available (e.g., from Railway),
-	// otherwise use individual variables from .env.
+	// Check for DATABASE_URL (Railway connection string)
+	dbURL := os.Getenv("DATABASE_URL")
 	var dsn string
-	if dbURL := os.Getenv("DATABASE_URL"); dbURL != "" {
+
+	if dbURL != "" {
+		// If DATABASE_URL is set, use it directly.
 		dsn = dbURL
 	} else {
+		// Otherwise, build the DSN from individual environment variables.
 		dbUser := os.Getenv("DB_USER")
 		dbPass := os.Getenv("DB_PASS")
 		dbHost := os.Getenv("DB_HOST")
 		dbName := os.Getenv("DB_NAME")
 		dbPort := os.Getenv("DB_PORT")
-
 		dsn = fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v TimeZone=Asia/Jakarta", dbHost, dbUser, dbPass, dbName, dbPort)
 	}
 
@@ -88,9 +90,8 @@ func SetUpDatabaseConnection() *gorm.DB {
 		DSN:                  dsn,
 		PreferSimpleProtocol: true,
 	}), &gorm.Config{})
-
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Failed to connect to database:", err)
 		panic(err)
 	}
 
@@ -98,7 +99,7 @@ func SetUpDatabaseConnection() *gorm.DB {
 	return db
 }
 
-func CloseDatabaseConnection(db *gorm.DB) {
+func ClosDatabaseConnection(db *gorm.DB) {
 	dbSQL, err := db.DB()
 	if err != nil {
 		fmt.Println(err)
