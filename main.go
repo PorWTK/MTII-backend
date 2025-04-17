@@ -170,7 +170,7 @@ func main() {
 	server := gin.Default()
 	// server.Use(middlewares.CORSMiddleware())
 	server.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"https://mtii-production.up.railway.app/"},
+		AllowOrigins:     []string{"https://mtii-production.up.railway.app"},
 		AllowMethods:     []string{"GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"},
 		AllowHeaders:     []string{"Content-Type", "Authorization", "Origin"},
 		AllowCredentials: true,
