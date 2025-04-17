@@ -121,6 +121,7 @@ import (
 	"mtii-backend/services"
 	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -168,6 +169,12 @@ func main() {
 	// 5. Set up Gin server with CORS
 	server := gin.Default()
 	// server.Use(middlewares.CORSMiddleware())
+	server.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"https://mtii-frontend-production.up.railway.app"},
+		AllowMethods:     []string{"GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"},
+		AllowHeaders:     []string{"Content-Type", "Authorization", "Origin"},
+		AllowCredentials: true,
+	}))
 
 	// 6. Register routes
 	routes.Router(
