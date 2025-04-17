@@ -5,7 +5,6 @@ import (
 	"mtii-backend/middlewares"
 	"mtii-backend/services"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -23,20 +22,6 @@ func Router(
 	DetailController controllers.DetailController,
 	tokenService services.TokenService,
 ) {
-	// ─────────────────────────────────────────────────────────────────────────
-	// Enable CORS for your frontend domain (adjust to your Vercel URL)
-	route.Use(cors.New(cors.Config{
-		AllowOrigins: []string{
-			"https://mtii-frontend.vercel.app/",                 // your production URL
-			"https://mtii-frontend-porwtks-projects.vercel.app", // if you use a preview domain
-
-		},
-		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
-		AllowCredentials: true,
-	}))
-	// ─────────────────────────────────────────────────────────────────────────
-
 	userRoutes := route.Group("/api/user")
 	{
 		userRoutes.POST("/login", UserController.LoginUser)
