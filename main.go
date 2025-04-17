@@ -211,6 +211,7 @@ func main() {
 		port = "8888"
 	}
 	log.Printf("Listening on :%s", port)
+	log.Println("BACKEND BUILD TAG  ✸  2025‑04‑17‑T23:15Z") // <–– add
 	if err := server.Run(":" + port); err != nil {
 		log.Fatalf("server error: %v", err)
 	}
