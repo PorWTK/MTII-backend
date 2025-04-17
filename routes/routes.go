@@ -30,7 +30,7 @@ func Router(
 		// Replace with your frontend’s actual URL
 		AllowOrigins:     []string{"https://mtii-frontend-production.up.railway.app"},
 		AllowMethods:     []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Content-Type", "Authorization"},
+		AllowHeaders:     []string{"Content-Type", "Authorization", "Origin"},
 		AllowCredentials: true,
 	}))
 
