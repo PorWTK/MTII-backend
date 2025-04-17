@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"mtii-backend/dtos"
 	"mtii-backend/services"
 	"mtii-backend/utils"
@@ -57,6 +58,8 @@ func (c *userController) LoginUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
+
+	fmt.Printf("LOGIN DEBUG %#v\n", req)
 
 	res, err := c.userService.VerifyCredential(ctx, req)
 	if err != nil {
