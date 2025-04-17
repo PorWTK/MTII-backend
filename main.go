@@ -82,12 +82,23 @@ func main() {
 		}
 	}()
 
-	go func() {
-		defer wg.Done()
-		if err := migrations.Seeder(db); err != nil {
-			log.Fatalf("error migration seeder: %v", err)
-		}
-	}()
+	// go func() {
+	// 	defer wg.Done()
+	// 	if err := migrations.Seeder(db); err != nil {
+	// 		log.Fatalf("error migration seeder: %v", err)
+	// 	}
+	// }()
+
+	if os.Getenv("SKIP_SEEDER") != "true" {
+		go func() {
+			defer wg.Done()
+			if err := migrations.Seeder(db); err != nil {
+				log.Fatalf("error migration seeder: %v", err)
+			}
+		}()
+	} else {
+		wg.Done() // skip and mark as done
+	}
 
 	wg.Wait()
 
