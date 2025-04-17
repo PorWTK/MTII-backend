@@ -5,6 +5,8 @@ import (
 	"mtii-backend/middlewares"
 	"mtii-backend/services"
 
+	"github.com/gin-contrib/cors"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,6 +24,16 @@ func Router(
 	DetailController controllers.DetailController,
 	tokenService services.TokenService,
 ) {
+
+	// 1) Register CORS *before* your routes:
+	route.Use(cors.New(cors.Config{
+		// Replace with your frontend’s actual URL
+		AllowOrigins:     []string{"https://mtii-production.up.railway.app/"},
+		AllowMethods:     []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
+	}))
+
 	userRoutes := route.Group("/api/user")
 	{
 		userRoutes.POST("/login", UserController.LoginUser)
