@@ -28,7 +28,7 @@ func Router(
 	// 1) Register CORS *before* your routes:
 	route.Use(cors.New(cors.Config{
 		// Replace with your frontend’s actual URL
-		AllowOrigins:     []string{"https://mtii-production.up.railway.app/"},
+		AllowOrigins:     []string{"mtii-production.up.railway.app"},
 		AllowMethods:     []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Content-Type", "Authorization"},
 		AllowCredentials: true,
