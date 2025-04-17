@@ -115,7 +115,6 @@ import (
 	"log"
 	"mtii-backend/config"
 	"mtii-backend/controllers"
-	"mtii-backend/middlewares"
 	"mtii-backend/migrations"
 	"mtii-backend/repositories"
 	"mtii-backend/routes"
@@ -168,7 +167,7 @@ func main() {
 
 	// 5. Set up Gin server with CORS
 	server := gin.Default()
-	server.Use(middlewares.CORSMiddleware())
+	// server.Use(middlewares.CORSMiddleware())
 
 	// 6. Register routes
 	routes.Router(
