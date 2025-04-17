@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"mtii-backend/dtos"
 	"mtii-backend/services"
 	"mtii-backend/utils"
@@ -31,44 +30,24 @@ func NewUserController(
 	}
 }
 
-// func (c *userController) LoginUser(ctx *gin.Context) {
-// 	var LoginRequest dtos.LoginRequest
-// 	err := ctx.ShouldBind(&LoginRequest)
-// 	if err != nil {
-// 		response := utils.BuildResponseFailed("Gagal mendapatkan request", err.Error(), utils.EmptyObj{})
-// 		ctx.JSON(http.StatusBadRequest, response)
-// 		return
-// 	}
-
-// 	res, err := c.userService.VerifyCredential(ctx.Request.Context(), LoginRequest)
-// 	if err != nil {
-// 		response := utils.BuildResponseFailed("User gagal login", err.Error(), utils.EmptyObj{})
-// 		ctx.JSON(http.StatusInternalServerError, response)
-// 		return
-// 	}
-
-// 	response := utils.BuildResponseSuccess("User berhasil login", res)
-// 	ctx.JSON(http.StatusOK, response)
-// }
-
 func (c *userController) LoginUser(ctx *gin.Context) {
-	var req dtos.LoginRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil { // ← force JSON
-		res := utils.BuildResponseFailed("Bad request", err.Error(), utils.EmptyObj{})
-		ctx.JSON(http.StatusBadRequest, res)
-		return
-	}
-
-	fmt.Printf("LOGIN DEBUG %#v\n", req)
-
-	res, err := c.userService.VerifyCredential(ctx, req)
+	var LoginRequest dtos.LoginRequest
+	err := ctx.ShouldBind(&LoginRequest)
 	if err != nil {
-		out := utils.BuildResponseFailed("Invalid credentials", err.Error(), utils.EmptyObj{})
-		ctx.JSON(http.StatusForbidden, out) // 403 on purpose
+		response := utils.BuildResponseFailed("Gagal mendapatkan request", err.Error(), utils.EmptyObj{})
+		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, utils.BuildResponseSuccess("Login OK", res))
+	res, err := c.userService.VerifyCredential(ctx.Request.Context(), LoginRequest)
+	if err != nil {
+		response := utils.BuildResponseFailed("User gagal login", err.Error(), utils.EmptyObj{})
+		ctx.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	response := utils.BuildResponseSuccess("User berhasil login", res)
+	ctx.JSON(http.StatusOK, response)
 }
 
 func (c *userController) LogoutUser(ctx *gin.Context) {
