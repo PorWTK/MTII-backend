@@ -26,7 +26,11 @@ func Router(
 	// ─────────────────────────────────────────────────────────────────────────
 	// Enable CORS for your frontend domain (adjust to your Vercel URL)
 	route.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"https://mtii-frontend.vercel.app"},
+		AllowOrigins: []string{
+			"https://mtii-frontend.vercel.app/",                 // your production URL
+			"https://mtii-frontend-porwtks-projects.vercel.app", // if you use a preview domain
+
+		},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		AllowCredentials: true,
