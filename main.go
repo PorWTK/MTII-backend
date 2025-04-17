@@ -113,6 +113,10 @@ package main
 
 import (
 	"log"
+	"os"
+
+	"github.com/gin-gonic/gin"
+
 	"mtii-backend/config"
 	"mtii-backend/controllers"
 	"mtii-backend/middlewares"
@@ -120,90 +124,94 @@ import (
 	"mtii-backend/repositories"
 	"mtii-backend/routes"
 	"mtii-backend/services"
-	"os"
-
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	// 1. Set up the database connection
+	// ─────────────────────────────────────────────────────────────
+	// 1. Database connection
+	// ─────────────────────────────────────────────────────────────
 	db := config.SetUpDatabaseConnection()
 
-	// 2. Initialize repositories
+	// ─────────────────────────────────────────────────────────────
+	// 2. Repositories, services, controllers (unchanged)
+	// ─────────────────────────────────────────────────────────────
 	userRepo := repositories.NewUserRepository(db)
-	platRepo := repositories.NewPlatformRepository(db)
-	statRepo := repositories.NewStatusRepository(db)
-	payRepo := repositories.NewPaymentMethodRepository(db)
-	saleRepo := repositories.NewSalePersonRepository(db)
-	chanRepo := repositories.NewChannelRepository(db)
+	platformRepo := repositories.NewPlatformRepository(db)
+	statusRepo := repositories.NewStatusRepository(db)
+	paymentRepo := repositories.NewPaymentMethodRepository(db)
+	salePersonRepo := repositories.NewSalePersonRepository(db)
+	channelRepo := repositories.NewChannelRepository(db)
 	bankRepo := repositories.NewBankRepository(db)
-	recvRepo := repositories.NewReceiverRepository(db)
-	incRepo := repositories.NewIncomeRepository(db)
-	detRepo := repositories.NewDetailRepository(db)
+	receiverRepo := repositories.NewReceiverRepository(db)
+	incomeRepo := repositories.NewIncomeRepository(db)
+	detailRepo := repositories.NewDetailRepository(db)
 
-	// 3. Initialize services
 	tokenSvc := services.NewTokenService()
 	userSvc := services.NewUserService(tokenSvc, userRepo)
-	platSvc := services.NewPlatformService(platRepo)
-	statSvc := services.NewStatusService(statRepo)
-	paySvc := services.NewPaymentMethodService(payRepo)
-	saleSvc := services.NewSalePersonService(saleRepo)
-	chanSvc := services.NewChannelService(chanRepo)
+	platformSvc := services.NewPlatformService(platformRepo)
+	statusSvc := services.NewStatusService(statusRepo)
+	paymentSvc := services.NewPaymentMethodService(paymentRepo)
+	salePersonSvc := services.NewSalePersonService(salePersonRepo)
+	channelSvc := services.NewChannelService(channelRepo)
 	bankSvc := services.NewBankService(bankRepo)
-	recvSvc := services.NewReceiverService(recvRepo)
-	incSvc := services.NewIncomeService(incRepo)
-	detSvc := services.NewDetailService(detRepo)
+	receiverSvc := services.NewReceiverService(receiverRepo)
+	incomeSvc := services.NewIncomeService(incomeRepo)
+	detailSvc := services.NewDetailService(detailRepo)
 
-	// 4. Initialize controllers
 	userCtrl := controllers.NewUserController(tokenSvc, userSvc)
-	platCtrl := controllers.NewPlatformController(tokenSvc, platSvc)
-	statCtrl := controllers.NewStatusController(tokenSvc, statSvc)
-	payCtrl := controllers.NewPaymentMethodController(tokenSvc, paySvc)
-	saleCtrl := controllers.NewSalePersonController(tokenSvc, saleSvc)
-	chanCtrl := controllers.NewChannelController(tokenSvc, chanSvc)
+	platformCtrl := controllers.NewPlatformController(tokenSvc, platformSvc)
+	statusCtrl := controllers.NewStatusController(tokenSvc, statusSvc)
+	paymentCtrl := controllers.NewPaymentMethodController(tokenSvc, paymentSvc)
+	salePersonCtrl := controllers.NewSalePersonController(tokenSvc, salePersonSvc)
+	channelCtrl := controllers.NewChannelController(tokenSvc, channelSvc)
 	bankCtrl := controllers.NewBankController(tokenSvc, bankSvc)
-	recvCtrl := controllers.NewReceiverController(tokenSvc, recvSvc)
-	incCtrl := controllers.NewIncomeController(tokenSvc, incSvc)
-	detCtrl := controllers.NewDetailController(tokenSvc, detSvc)
+	receiverCtrl := controllers.NewReceiverController(tokenSvc, receiverSvc)
+	incomeCtrl := controllers.NewIncomeController(tokenSvc, incomeSvc)
+	detailCtrl := controllers.NewDetailController(tokenSvc, detailSvc)
 
-	// 5. Set up Gin server with CORS
-	server := gin.Default()
-	server.Use(middlewares.CORSMiddleware())
-
-	// 6. Register routes
-	routes.Router(
-		server,
-		userCtrl,
-		platCtrl,
-		statCtrl,
-		payCtrl,
-		saleCtrl,
-		chanCtrl,
-		bankCtrl,
-		recvCtrl,
-		incCtrl,
-		detCtrl,
-		tokenSvc,
-	)
-
-	// 7. Run migrations (always)
+	// ─────────────────────────────────────────────────────────────
+	// 3. Run migrations (always) and seeder (optionally)
+	// ─────────────────────────────────────────────────────────────
 	if err := migrations.Migrate(db); err != nil {
-		log.Fatalf("Migration error: %v", err)
+		log.Fatalf("migration error: %v", err)
 	}
 
-	// 8. Optionally run seeder
 	if os.Getenv("SKIP_SEEDER") != "true" {
 		if err := migrations.Seeder(db); err != nil {
-			log.Fatalf("Seeder error: %v", err)
+			log.Fatalf("seeder error: %v", err)
 		}
 	}
 
-	// 9. Start the server on the given PORT
+	// ─────────────────────────────────────────────────────────────
+	// 4. Gin engine with CORS, then routes
+	// ─────────────────────────────────────────────────────────────
+	server := gin.Default()
+	server.Use(middlewares.CORSMiddleware())
+
+	routes.Router(
+		server,
+		userCtrl,
+		platformCtrl,
+		statusCtrl,
+		paymentCtrl,
+		salePersonCtrl,
+		channelCtrl,
+		bankCtrl,
+		receiverCtrl,
+		incomeCtrl,
+		detailCtrl,
+		tokenSvc,
+	)
+
+	// ─────────────────────────────────────────────────────────────
+	// 5. Start HTTP server
+	// ─────────────────────────────────────────────────────────────
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8888"
 	}
-	server.Run(
-		":" + port,
-	)
+	log.Printf("Listening on :%s", port)
+	if err := server.Run(":" + port); err != nil {
+		log.Fatalf("server error: %v", err)
+	}
 }

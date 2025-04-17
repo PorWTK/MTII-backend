@@ -26,22 +26,26 @@ package middlewares
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
 
-// CORSMiddleware sets CORS headers and handles preflight requests.
+// CORSMiddleware sets the CORS headers and completes OPTIONS pre‑flight requests.
 func CORSMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		// TODO: replace this with your actual frontend URL or read from env
-		allowedOrigin := "https://mtii-production.up.railway.app"
+	// allowOrigin can be configured via env for flexibility
+	allowOrigin := os.Getenv("FRONTEND_ORIGIN")
+	if allowOrigin == "" {
+		// fall back to your deployed frontend URL
+		allowOrigin = "https://mtii-production.up.railway.app"
+	}
 
-		c.Writer.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", allowOrigin)
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
 
-		// Respond OK to preflight requests
 		if c.Request.Method == http.MethodOptions {
 			c.AbortWithStatus(http.StatusNoContent)
 			return
