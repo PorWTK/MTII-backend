@@ -34,7 +34,7 @@
 // 	var LoginRequest dtos.LoginRequest
 // 	err := ctx.ShouldBind(&LoginRequest)
 // 	if err != nil {
-// 		response := utils.BuildResponseFailed("Gagal mendapatkan request", err.Error(), utils.EmptyObj{})
+// 		response := utils.BuildResponseFailed("Failed to retrieve request", err.Error(), utils.EmptyObj{})
 // 		ctx.JSON(http.StatusBadRequest, response)
 // 		return
 // 	}
@@ -135,7 +135,7 @@ func (c *userController) LoginUser(ctx *gin.Context) {
 	res, err := c.userService.VerifyCredential(ctx, req)
 	if err != nil {
 		ctx.JSON(http.StatusForbidden,
-			utils.BuildResponseFailed("Invalid credentials", err.Error(), utils.EmptyObj{}))
+			utils.BuildResponseFailed("nvalid credentials", err.Error(), utils.EmptyObj{}))
 		return
 	}
 

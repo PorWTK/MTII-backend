@@ -37,19 +37,19 @@ func (c *channelController) GetAllChannel(ctx *gin.Context) {
 	token := ctx.MustGet("token").(string)
 	_, err := c.tokenService.GetUserIdByToken(token)
 	if err != nil {
-		res := utils.BuildResponseFailed("Gagal memproses request", "Token tidak valid", utils.EmptyObj{})
+		res := utils.BuildResponseFailed("Failed to process the request", "Invalid token", utils.EmptyObj{})
 		ctx.JSON(http.StatusUnauthorized, res)
 		return
 	}
 
 	channels, err := c.channelService.GetAllChannel(ctx.Request.Context())
 	if err != nil {
-		res := utils.BuildResponseFailed("Gagal mendapatkan channel", err.Error(), utils.EmptyObj{})
+		res := utils.BuildResponseFailed("Failed to retrieve channel", err.Error(), utils.EmptyObj{})
 		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess("Berhasil mendapatkan channel", channels)
+	res := utils.BuildResponseSuccess("Successfully retrieved channel", channels)
 	ctx.JSON(http.StatusOK, res)
 }
 
@@ -57,7 +57,7 @@ func (c *channelController) GetChannelById(ctx *gin.Context) {
 	token := ctx.MustGet("token").(string)
 	_, err := c.tokenService.GetUserIdByToken(token)
 	if err != nil {
-		res := utils.BuildResponseFailed("Gagal memproses request", "Token tidak valid", utils.EmptyObj{})
+		res := utils.BuildResponseFailed("Failed to process the request", "Invalid token", utils.EmptyObj{})
 		ctx.JSON(http.StatusUnauthorized, res)
 		return
 	}
@@ -65,19 +65,19 @@ func (c *channelController) GetChannelById(ctx *gin.Context) {
 	channelId := ctx.Param("channel_id")
 	parsedChannelId, err := strconv.Atoi(channelId)
 	if err != nil {
-		res := utils.BuildResponseFailed("Gagal memproses request", "Channel Id tidak valid", utils.EmptyObj{})
+		res := utils.BuildResponseFailed("Failed to process the request", "Channel Id tidak valid", utils.EmptyObj{})
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
 
 	channel, err := c.channelService.GetChannelById(ctx.Request.Context(), parsedChannelId)
 	if err != nil {
-		res := utils.BuildResponseFailed("Gagal mendapatkan channel", err.Error(), utils.EmptyObj{})
+		res := utils.BuildResponseFailed("Failed to retrieve channel", err.Error(), utils.EmptyObj{})
 		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess("Berhasil mendapatkan channel", channel)
+	res := utils.BuildResponseSuccess("Successfully retrieved channel", channel)
 	ctx.JSON(http.StatusOK, res)
 }
 
@@ -85,26 +85,26 @@ func (c *channelController) CreateChannel(ctx *gin.Context) {
 	token := ctx.MustGet("token").(string)
 	_, err := c.tokenService.GetUserIdByToken(token)
 	if err != nil {
-		res := utils.BuildResponseFailed("Gagal memproses request", "Token tidak valid", utils.EmptyObj{})
+		res := utils.BuildResponseFailed("Failed to process the request", "Invalid token", utils.EmptyObj{})
 		ctx.JSON(http.StatusUnauthorized, res)
 		return
 	}
 
 	var req dtos.ChannelRequest
 	if err := ctx.ShouldBind(&req); err != nil {
-		response := utils.BuildResponseFailed("Gagal mendapatkan request", err.Error(), utils.EmptyObj{})
+		response := utils.BuildResponseFailed("Failed to retrieve request", err.Error(), utils.EmptyObj{})
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
 
 	channel, err := c.channelService.CreateChannel(ctx.Request.Context(), req)
 	if err != nil {
-		res := utils.BuildResponseFailed("Gagal menyimpan channel", err.Error(), utils.EmptyObj{})
+		res := utils.BuildResponseFailed("Failed to save channel", err.Error(), utils.EmptyObj{})
 		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess("Data channel berhasil disimpan", channel)
+	res := utils.BuildResponseSuccess("Data channel successfully saved", channel)
 	ctx.JSON(http.StatusCreated, res)
 }
 
@@ -112,14 +112,14 @@ func (c *channelController) UpdateChannel(ctx *gin.Context) {
 	token := ctx.MustGet("token").(string)
 	_, err := c.tokenService.GetUserIdByToken(token)
 	if err != nil {
-		res := utils.BuildResponseFailed("Gagal memproses request", "Token tidak valid", utils.EmptyObj{})
+		res := utils.BuildResponseFailed("Failed to process the request", "Invalid token", utils.EmptyObj{})
 		ctx.JSON(http.StatusUnauthorized, res)
 		return
 	}
 
 	var req dtos.ChannelRequest
 	if err := ctx.ShouldBind(&req); err != nil {
-		response := utils.BuildResponseFailed("Gagal mendapatkan request", err.Error(), utils.EmptyObj{})
+		response := utils.BuildResponseFailed("Failed to retrieve request", err.Error(), utils.EmptyObj{})
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
@@ -127,19 +127,19 @@ func (c *channelController) UpdateChannel(ctx *gin.Context) {
 	channelId := ctx.Param("channel_id")
 	parsedChannelId, err := strconv.Atoi(channelId)
 	if err != nil {
-		res := utils.BuildResponseFailed("Gagal memproses request", "Channel Id tidak valid", utils.EmptyObj{})
+		res := utils.BuildResponseFailed("Failed to process the request", "Channel Id tidak valid", utils.EmptyObj{})
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
 
 	channel, err := c.channelService.UpdateChannel(ctx, parsedChannelId, req)
 	if err != nil {
-		res := utils.BuildResponseFailed("Gagal mengupdate channel", err.Error(), utils.EmptyObj{})
+		res := utils.BuildResponseFailed("Failed to update channel", err.Error(), utils.EmptyObj{})
 		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess("Channel berhasil diupdate", channel)
+	res := utils.BuildResponseSuccess("Channel successfully updated", channel)
 	ctx.JSON(http.StatusOK, res)
 }
 
@@ -147,7 +147,7 @@ func (c *channelController) DeleteChannel(ctx *gin.Context) {
 	token := ctx.MustGet("token").(string)
 	_, err := c.tokenService.GetUserIdByToken(token)
 	if err != nil {
-		res := utils.BuildResponseFailed("Gagal memproses request", "Token tidak valid", utils.EmptyObj{})
+		res := utils.BuildResponseFailed("Failed to process the request", "Invalid token", utils.EmptyObj{})
 		ctx.JSON(http.StatusUnauthorized, res)
 		return
 	}
@@ -155,17 +155,17 @@ func (c *channelController) DeleteChannel(ctx *gin.Context) {
 	channelId := ctx.Param("channel_id")
 	parsedChannelId, err := strconv.Atoi(channelId)
 	if err != nil {
-		res := utils.BuildResponseFailed("Gagal memproses request", "Channel Id tidak valid", utils.EmptyObj{})
+		res := utils.BuildResponseFailed("Failed to process the request", "Channel Id tidak valid", utils.EmptyObj{})
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
 
 	if err := c.channelService.DeleteChannel(ctx, parsedChannelId); err != nil {
-		res := utils.BuildResponseFailed("Gagal menghapus channel", err.Error(), utils.EmptyObj{})
+		res := utils.BuildResponseFailed("Failed to delete channel", err.Error(), utils.EmptyObj{})
 		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess("Channel berhasil dihapus", utils.EmptyObj{})
+	res := utils.BuildResponseSuccess("Channel successfully deleted", utils.EmptyObj{})
 	ctx.JSON(http.StatusOK, res)
 }
